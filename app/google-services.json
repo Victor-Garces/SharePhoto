@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "256231239801",
+    "firebase_url": "https://sharephoto-2722b.firebaseio.com",
+    "project_id": "sharephoto-2722b",
+    "storage_bucket": "sharephoto-2722b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256231239801:android:dd31cb610b9ae50a",
+        "android_client_info": {
+          "package_name": "com.example.victor.sharephoto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "256231239801-pnnoda4f69m14kjg632f3gfaqb40bupt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.victor.sharephoto",
+            "certificate_hash": "ae61642745743f6fbb96df3e80bf68b4457a9a0f"
+          }
+        },
+        {
+          "client_id": "256231239801-qer82fvr1gs8f4fmksol0gabapjthi3v.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "256231239801-qer82fvr1gs8f4fmksol0gabapjthi3v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7vp17Jzh3vzi04gfAuGoOCLa9XtkTvME"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "256231239801-qer82fvr1gs8f4fmksol0gabapjthi3v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

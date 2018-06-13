@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RegistrationActivity">
 
-    <ImageView
-        android:id="@+id/baby_groot"
-        android:layout_width="137dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
+    <TextView
+        android:id="@+id/Registration"
+        android:text="@string/registration"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp"
-        app:srcCompat="@drawable/baby_groot"
-        tools:layout_editor_absoluteX="137dp"
-        tools:layout_editor_absoluteY="74dp" />
+        android:layout_marginTop="10dp"
+        android:textSize="25sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/mEmailField"
+        android:id="@+id/mEmailFieldRegistration"
         android:background="@layout/edit_border_format"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/baby_groot"
+        android:layout_below="@+id/Registration"
         android:gravity="center"
         android:hint="@string/username"
         android:layout_marginTop="25dp"/>
 
     <EditText
-        android:id="@+id/mPasswordField"
+        android:id="@+id/mPasswordFieldRegistration"
         android:background="@layout/edit_border_format"
         android:padding="10dp"
         android:layout_width="match_parent"
@@ -38,25 +35,16 @@
         android:ellipsize="start"
         android:gravity="center"
         android:hint="@string/password"
-        android:layout_below="@id/mEmailField"
+        android:layout_below="@id/mEmailFieldRegistration"
         android:layout_marginTop="10dp"/>
 
     <Button
-        android:id="@+id/mLogin"
+        android:id="@+id/mAccept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mPasswordField"
+        android:layout_below="@+id/mPasswordFieldRegistration"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="@string/login" />
-
-    <Button
-        android:id="@+id/mSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mLogin"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="@string/sign_up" />
+        android:text="@string/accept" />
 
 </RelativeLayout>
