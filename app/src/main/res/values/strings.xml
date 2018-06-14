@@ -6,4 +6,6 @@
     <string name="sign_up">Sign up</string>
     <string name="registration">Registration</string>
     <string name="accept">Accept</string>
+    <string name="history">Image history</string>
+    <string name="add">Add button</string>
 </resources>
