@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SharePhoto</string>
+    <string name="app_name">Share Photo</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
