@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.IntDef;
@@ -53,7 +54,7 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_add_picture, menu);
         return true;
     }
 
@@ -83,6 +84,20 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
         }
     }
 
+    //Get thumbnail image
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Intent intent = new Intent(this,PictureConfigurationActivity.class);
+            intent.putExtra("thumbnail",imageBitmap);
+            startActivity(intent);
+        }
+    }
+
+
+    //CHECK PERMISSIONS
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -8,4 +8,12 @@
     <string name="accept">Accept</string>
     <string name="history">Image history</string>
     <string name="add">Add button</string>
+    <string name="thumbnail_edit_text">Write something!...</string>
+    <string name="thumbnail">thumbnail.</string>
+    <string name="location">Add location</string>
+    <string name="place">place</string>
+    <string name="share">Share in</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="instagram">Instagram</string>
 </resources>
