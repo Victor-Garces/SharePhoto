@@ -32,7 +32,7 @@
         </activity>
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginSuccessActivity" />
-        <activity android:name=".PictureConfigurationActivity"></activity>
+        <activity android:name=".PictureConfigurationActivity" />
     </application>
 
 </manifest>
