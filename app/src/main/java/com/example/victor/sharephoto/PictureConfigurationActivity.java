@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
@@ -19,6 +20,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -30,7 +34,12 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +68,8 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
     private List<Address> addresses;
     private FusedLocationProviderClient client;
     private Geocoder geocoder;
+    private StorageReference mStorageRef;
+    private Uri photoURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +77,8 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         setContentView(R.layout.activity_picture_configuration);
 
         Bitmap imageBitmap = getIntent().getParcelableExtra("thumbnail");
+
+        photoURI = getIntent().getParcelableExtra("photoURI");
 
         //Thumbnail
         ImageView thumbnailView = findViewById(R.id.thumbnail);
@@ -98,6 +111,30 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
 
         //Geocoder
         geocoder = new Geocoder(this, Locale.getDefault());
+
+        //Storage reference to Firebase
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_finalize, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.finalize:
+                uploadPictureToFirebase();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -254,5 +291,24 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
                 });
             }
         }
+
+    private void uploadPictureToFirebase(){
+        StorageReference riversRef = mStorageRef.child("images/" + photoURI.getLastPathSegment());
+
+        riversRef.putFile(photoURI)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(PictureConfigurationActivity.this, "Fail uploading picture", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
 }

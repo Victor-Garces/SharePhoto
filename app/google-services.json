@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "256231239801-hghha11kk4gq4a7eb8ij6v1a5s586fb3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.victor.sharephoto",
+            "certificate_hash": "d4c2d9c80a66d704de7cdefd4d634f5119243036"
+          }
+        },
+        {
           "client_id": "256231239801-pnnoda4f69m14kjg632f3gfaqb40bupt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
