@@ -3,6 +3,7 @@ package com.example.victor.sharephoto;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -37,7 +38,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -62,14 +66,26 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
 
     private TextView locationTextView;
     private ImageView placeImageView;
+    private EditText writeSomethingEditText;
+
+    private ProgressDialog progressDialog ;
 
     private String lastLocation;
-    private Editable writeSomething;
     private List<Address> addresses;
     private FusedLocationProviderClient client;
     private Geocoder geocoder;
     private StorageReference mStorageRef;
     private Uri photoURI;
+
+    // Folder path for Firebase Storage.
+    private String Storage_Path = "All_Image_Uploads/";
+
+    // Root Database Name for Firebase Database.
+    private String Database_Path = "All_Image_Uploads_Database";
+
+    // Creating StorageReference and DatabaseReference object.
+    StorageReference storageReference;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +95,10 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         Bitmap imageBitmap = getIntent().getParcelableExtra("thumbnail");
 
         photoURI = getIntent().getParcelableExtra("photoURI");
+
+        // StorageReference and DatabaseReference object.
+        storageReference = FirebaseStorage.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
 
         //Thumbnail
         ImageView thumbnailView = findViewById(R.id.thumbnail);
@@ -102,9 +122,11 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         Switch instagramSwitch = findViewById(R.id.instagram_switch);
         instagramSwitch.setOnCheckedChangeListener(this);
 
+        // Assigning Id to ProgressDialog.
+        progressDialog = new ProgressDialog(PictureConfigurationActivity.this);
+
         //Edit text
-        EditText writeSomethingEditText = findViewById(R.id.write_something);
-        writeSomething = writeSomethingEditText.getText();
+        writeSomethingEditText = findViewById(R.id.write_something);
 
         //Location services
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -184,7 +206,124 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         }
     }
 
-    //CHECK PERMISSIONS
+
+    private void uploadPictureToFirebase(){
+
+        // Setting progressDialog Title.
+        progressDialog.setTitle("Image is uploading...");
+
+        // Showing progressDialog.
+        progressDialog.show();
+
+        StorageReference riversRef = mStorageRef.child(Storage_Path + photoURI.getLastPathSegment());
+
+        riversRef.putFile(photoURI)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        // Hiding the progressDialog after done uploading.
+                        progressDialog.dismiss();
+
+                        //Comment of the picture
+                        String comment =  writeSomethingEditText.getText().toString();
+
+                        //Location where was took the picture
+                        String pictureLocation = lastLocation;
+
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        UploadContent uploadContent = new UploadContent(comment,pictureLocation,downloadUrl.toString());
+
+                        // Getting image upload ID.
+                        String ImageUploadId = databaseReference.push().getKey();
+
+                        // Adding image upload id s child element into databaseReference.
+                        databaseReference.child(ImageUploadId).setValue(uploadContent);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Hiding the progressDialog.
+                        progressDialog.dismiss();
+
+                        // Showing exception error message.
+                        Toast.makeText(PictureConfigurationActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                // On progress change upload time.
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        // Setting progressDialog Title.
+                        progressDialog.setTitle("Image is uploading...");
+                    }
+            });
+    }
+
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            checkMultiplePermissions(REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS, PictureConfigurationActivity.this);
+        }
+        else{
+        client.getLastLocation()
+            .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    Location location = task.getResult();
+
+                    try {
+                        addresses = geocoder.getFromLocation(
+                                location.getLatitude(),
+                                location.getLongitude(),1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (addresses == null || addresses.size()  == 0) {
+                        Toast.makeText(PictureConfigurationActivity.this, "No addresses availables", Toast.LENGTH_SHORT).show();
+                        lastLocation = "Location not available";
+                    } else {
+                        Address address = addresses.get(0);
+
+                        ArrayList<String> addressFragments = new ArrayList<String>();
+
+                        // Fetch the address lines using getAddressLine,
+                        // join them, and send them to the thread.
+                        for(int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                            addressFragments.add(address.getAddressLine(i));
+                        }
+                        if(addressFragments.size() > 1){
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                lastLocation = String.join(", ", addressFragments);
+                            }else{
+                                lastLocation = addressFragments.get(0);
+                            }
+                        }else{
+                            lastLocation = addressFragments.get(0);
+                        }
+                    }
+                    //Hide the place image icon
+                    placeImageView.setVisibility(View.INVISIBLE);
+
+                    //Change the default value of the value by the last location
+                    locationTextView.setText(lastLocation);
+                }
+            });
+        }
+    }
+
+    // ------------------ CHECK PERMISSIONS ---------------------------//
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -233,82 +372,4 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         }
         return true;
     }
-
-    private void getLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            checkMultiplePermissions(REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS, PictureConfigurationActivity.this);
-        }
-        else{
-        client.getLastLocation()
-                .addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        Location location = task.getResult();
-
-                        try {
-                            addresses = geocoder.getFromLocation(
-                                        location.getLatitude(),
-                                        location.getLongitude(),1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (addresses == null || addresses.size()  == 0) {
-                            Toast.makeText(PictureConfigurationActivity.this, "No addresses availables", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Address address = addresses.get(0);
-
-                            ArrayList<String> addressFragments = new ArrayList<String>();
-
-                            // Fetch the address lines using getAddressLine,
-                            // join them, and send them to the thread.
-                            for(int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                                addressFragments.add(address.getAddressLine(i));
-                            }
-                            if(addressFragments.size() > 1){
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                    lastLocation = String.join(", ", addressFragments);
-                                }else{
-                                     lastLocation = addressFragments.get(0);
-                                }
-                            }else{
-                                 lastLocation = addressFragments.get(0);
-                            }
-                        }
-                        //Hide the place image icon
-                        placeImageView.setVisibility(View.INVISIBLE);
-
-                        //Change the default value of the value by the last location
-                        locationTextView.setText(lastLocation);
-                    }
-                });
-            }
-        }
-
-    private void uploadPictureToFirebase(){
-        StorageReference riversRef = mStorageRef.child("images/" + photoURI.getLastPathSegment());
-
-        riversRef.putFile(photoURI)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(PictureConfigurationActivity.this, "Fail uploading picture", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
 }
