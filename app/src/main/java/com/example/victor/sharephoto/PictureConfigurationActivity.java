@@ -120,8 +120,7 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         Switch twitterSwitch = findViewById(R.id.twitter_switch);
         twitterSwitch.setOnCheckedChangeListener(this);
 
-        Switch instagramSwitch = findViewById(R.id.instagram_switch);
-        instagramSwitch.setOnCheckedChangeListener(this);
+
 
         // Assigning Id to ProgressDialog.
         progressDialog = new ProgressDialog(PictureConfigurationActivity.this);
@@ -195,15 +194,6 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
             }
 
 
-        }
-        if (b == R.id.instagram_switch) {
-            if (isChecked) {
-                // The toggle is enabled
-                Toast.makeText(PictureConfigurationActivity.this, "Activado Instagram", Toast.LENGTH_SHORT).show();
-            } else {
-                // The toggle is disabled
-                Toast.makeText(PictureConfigurationActivity.this, "Desactivado Instagram", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
