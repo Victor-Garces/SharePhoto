@@ -17,4 +17,5 @@
     <string name="twitter">Twitter</string>
     <string name="instagram">Instagram</string>
     <string name="finalize">Finalize</string>
+    <string name="imageURL">imageURL</string>
 </resources>

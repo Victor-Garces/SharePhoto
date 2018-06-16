@@ -20,12 +20,6 @@ public class UploadContent {
         ImageURL = imageURL;
     }
 
-    public UploadContent(String comment, String location, String url){
-        this.ImageComment = comment;
-        this.ImageLocation = location;
-        this.ImageURL = url;
-    }
-
     public String getImageComment(){
         return ImageComment;
     }

@@ -20,13 +20,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -36,7 +44,9 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class LoginSuccessActivity extends AppCompatActivity implements OnDialogButtonClickListener{
 
@@ -59,6 +69,14 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
     private String mGoToSettings = "Go To Settings";
     private String mPermissionRejectWarning = "Cannot Proceed Without Permissions";
 
+    // Root Database Name for Firebase Database.
+    private String Database_Path = "All_Image_Uploads_Database";
+
+    private List<UploadContent> uploadContents;
+
+    // Creating StorageReference and DatabaseReference object.
+    DatabaseReference databaseReference;
+
     // type of dialog opened in MainActivity
     @IntDef({DialogType.DIALOG_DENY, DialogType.DIALOG_NEVER_ASK})
     @Retention(RetentionPolicy.SOURCE)
@@ -71,7 +89,38 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_success);
 
-        //TODO Traer todos reportes subidos hasta el momento
+        // StorageReference and DatabaseReference object.
+        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GetData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+        //Save the data of the database into a list.
+    private void GetData(DataSnapshot dataSnapshot) {
+
+        uploadContents = new ArrayList<>();
+
+        for(DataSnapshot ds : dataSnapshot.getChildren()){
+            UploadContent uploadContent = ds.getValue(UploadContent.class);
+            uploadContents.add(uploadContent);
+        }
+
+        RecyclerView recyclerView = findViewById(R.id.myRecyclerView);
+
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(uploadContents);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
+        recyclerView.setAdapter(recyclerAdapter);
     }
 
     @Override

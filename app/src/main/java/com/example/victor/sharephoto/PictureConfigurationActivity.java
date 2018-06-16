@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -150,8 +151,8 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         switch (item.getItemId()) {
             case R.id.finalize:
                 uploadPictureToFirebase();
-                return true;
-
+                Intent intent = new Intent(this,LoginSuccessActivity.class);
+                startActivity(intent);
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -234,7 +235,10 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
                         // Get a URL to the uploaded content
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                        UploadContent uploadContent = new UploadContent(comment,pictureLocation,downloadUrl.toString());
+                        UploadContent uploadContent = new UploadContent();
+                        uploadContent.setImageURL(downloadUrl.toString());
+                        uploadContent.setImageComment(comment);
+                        uploadContent.setImageLocation(pictureLocation);
 
                         // Getting image upload ID.
                         String ImageUploadId = databaseReference.push().getKey();
