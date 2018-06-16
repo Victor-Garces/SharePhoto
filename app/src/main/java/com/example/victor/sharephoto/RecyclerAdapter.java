@@ -1,23 +1,27 @@
 package com.example.victor.sharephoto;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerItemViewHolder>{
 
     private List<UploadContent> uploadContents;
+    private Context mContext;
 
-    public RecyclerAdapter(List<UploadContent> uploadContents) {
+    public RecyclerAdapter(List<UploadContent> uploadContents, Context context) {
         this.uploadContents = uploadContents;
+        this.mContext = context;
     }
 
     @NonNull
@@ -33,7 +37,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         //Set the image by the URL
         String path = uploadContents.get(position).getImageURL();
-        Picasso.get().load(path).into(holder.imageURL);
+        Glide.with(mContext).load(path)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.imageURL);
 
         holder.imageLocation.setText(uploadContents.get(position).getImageLocation());
 
@@ -60,6 +67,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             imageURL = itemView.findViewById(R.id.myImageURL);
             imageLocation = itemView.findViewById(R.id.myImageLocation);
             imageComment = itemView.findViewById(R.id.myImageComment);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+
+        // This will force all models to be unbound and their views recycled once the RecyclerView is no longer in use. We need this so resources
+        // are properly released, listeners are detached, and views can be returned to view pools (if applicable).
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).setRecycleChildrenOnDetach(true);
         }
     }
 }

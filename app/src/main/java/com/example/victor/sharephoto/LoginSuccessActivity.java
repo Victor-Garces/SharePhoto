@@ -1,5 +1,6 @@
 package com.example.victor.sharephoto;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -72,7 +74,7 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
     // Root Database Name for Firebase Database.
     private String Database_Path = "All_Image_Uploads_Database";
 
-    private List<UploadContent> uploadContents;
+    private RecyclerView recyclerView;
 
     // Creating StorageReference and DatabaseReference object.
     DatabaseReference databaseReference;
@@ -89,13 +91,15 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_success);
 
+        recyclerView = findViewById(R.id.myRecyclerView);
+
         // StorageReference and DatabaseReference object.
         databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GetData(dataSnapshot);
+                LoadDataFromServer(dataSnapshot);
             }
 
             @Override
@@ -105,20 +109,17 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
         });
 
     }
-        //Save the data of the database into a list.
-    private void GetData(DataSnapshot dataSnapshot) {
 
-        uploadContents = new ArrayList<>();
+    private void LoadDataFromServer(DataSnapshot dataSnapshot) {
+        List<UploadContent> uploadContents = new ArrayList<>();
 
         for(DataSnapshot ds : dataSnapshot.getChildren()){
             UploadContent uploadContent = ds.getValue(UploadContent.class);
             uploadContents.add(uploadContent);
         }
 
-        RecyclerView recyclerView = findViewById(R.id.myRecyclerView);
-
-        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(uploadContents);
-
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(uploadContents, this);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
         recyclerView.setAdapter(recyclerAdapter);
     }
@@ -151,7 +152,7 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -295,5 +296,14 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
     @Override
     public void onNegativeButtonClicked() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the adapter.
+        // Because the RecyclerView won't unregister the adapter, the
+        // ViewHolders are very likely leaked.
+        recyclerView.setAdapter(null);
     }
 }

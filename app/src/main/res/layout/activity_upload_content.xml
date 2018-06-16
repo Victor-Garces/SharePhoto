@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         card_view:cardUseCompatPadding="true"
-        card_view:cardElevation="4dp"
-        card_view:cardCornerRadius="3dp">
+        card_view:cardElevation="15dp"
+        card_view:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,8 +20,8 @@
 
             <ImageView
                 android:id="@+id/myImageURL"
-                android:layout_width="wrap_content"
-                android:layout_height="469dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/myImageComment"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="43dp"
@@ -30,16 +30,20 @@
 
             <TextView
                 android:id="@+id/myImageLocation"
-                android:layout_width="367dp"
-                android:layout_height="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="3dp"
                 android:layout_alignLeft="@+id/myImageURL"
                 android:layout_alignParentTop="true"
                 android:layout_alignStart="@+id/myImageURL" />
 
             <TextView
                 android:id="@+id/myImageComment"
-                android:layout_width="368dp"
-                android:layout_height="45dp"
+                android:textSize="20sp"
+                android:padding="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/myImageLocation" />
 
         </RelativeLayout>
