@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/colorWhite"
     android:layout_height="match_parent"
     tools:context=".PictureConfigurationActivity">
 
@@ -85,12 +86,15 @@
 
     <TextView
         android:id="@+id/facebook"
-        android:layout_below="@id/share"
-        android:text="@string/facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="196dp"
+        android:padding="12dp"
+        android:text="@string/facebook"
         android:textSize="20sp"
-        android:padding="12dp"/>
+        android:layout_alignParentLeft="true" />
 
     <Switch
         android:id="@+id/facebook_switch"
@@ -104,12 +108,15 @@
 
     <TextView
         android:id="@+id/twitter"
-        android:layout_below="@id/facebook"
-        android:text="@string/twitter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="75dp"
+        android:padding="12dp"
+        android:text="@string/twitter"
         android:textSize="20sp"
-        android:padding="12dp"/>
+        android:layout_alignParentLeft="true" />
 
     <Switch
         android:id="@+id/twitter_switch"
@@ -119,21 +126,24 @@
         android:layout_alignStart="@+id/facebook_switch"
         android:layout_alignLeft="@+id/facebook_switch" />
 
-    <TextView
-        android:id="@+id/instagram"
-        android:layout_below="@id/twitter"
-        android:text="@string/instagram"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:padding="12dp"/>
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="62dp"
+        android:layout_height="47dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="221dp"
+        app:srcCompat="@drawable/facebook"
+        android:layout_alignParentLeft="true" />
 
-    <Switch
-        android:id="@+id/instagram_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/instagram"
-        android:layout_alignStart="@+id/facebook_switch"
-        android:layout_alignLeft="@+id/facebook_switch" />
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="62dp"
+        android:layout_height="47dp"
+        android:layout_above="@+id/twitter"
+        android:layout_alignParentStart="true"
+        app:srcCompat="@drawable/twitter"
+        android:layout_alignParentLeft="true" />
+
 
 </RelativeLayout>
