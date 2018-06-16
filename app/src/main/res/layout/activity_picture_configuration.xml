@@ -88,13 +88,12 @@
         android:id="@+id/facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="196dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="220dp"
         android:padding="12dp"
         android:text="@string/facebook"
-        android:textSize="20sp"
-        android:layout_alignParentLeft="true" />
+        android:textSize="20sp" />
 
     <Switch
         android:id="@+id/facebook_switch"
@@ -105,18 +104,5 @@
         android:layout_marginEnd="17dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="17dp" />
-
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="62dp"
-        android:layout_height="47dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="221dp"
-        app:srcCompat="@drawable/facebook"
-        android:layout_alignParentLeft="true" />
     
-
-
 </RelativeLayout>

@@ -25,8 +25,7 @@
                 android:layout_alignTop="@+id/myImageComment"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="43dp"
-                android:contentDescription="@string/imageURL"
-                app:srcCompat="@drawable/baby_groot" />
+                android:contentDescription="@string/imageURL"/>
 
             <TextView
                 android:id="@+id/myImageLocation"

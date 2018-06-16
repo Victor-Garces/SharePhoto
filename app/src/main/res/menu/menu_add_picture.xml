@@ -8,7 +8,4 @@
             app:showAsAction="ifRoom"
             android:title="@string/add" />
 
-        <item
-            />
-
 </menu>
