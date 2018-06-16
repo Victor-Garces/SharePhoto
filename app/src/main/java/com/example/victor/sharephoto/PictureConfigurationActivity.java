@@ -140,9 +140,6 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         Switch facebookSwitch = findViewById(R.id.facebook_switch);
         facebookSwitch.setOnCheckedChangeListener(this);
 
-        Switch twitterSwitch = findViewById(R.id.twitter_switch);
-        twitterSwitch.setOnCheckedChangeListener(this);
-
 
 
         // Assigning Id to ProgressDialog.
@@ -230,17 +227,6 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
             facebookSwitch = isChecked;
         }
 
-        if (b == R.id.twitter_switch) {
-            if (isChecked) {
-                // The toggle is enabled
-                Toast.makeText(PictureConfigurationActivity.this, "Activado Twitter", Toast.LENGTH_SHORT).show();
-            } else {
-                // The toggle is disabled
-                Toast.makeText(PictureConfigurationActivity.this, "Desactivado Twitter", Toast.LENGTH_SHORT).show();
-            }
-
-
-        }
     }
 
     private void uploadPictureToFirebase(){
