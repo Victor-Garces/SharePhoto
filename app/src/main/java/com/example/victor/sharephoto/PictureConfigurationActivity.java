@@ -52,6 +52,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -261,6 +262,9 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
                         // Hiding the progressDialog after done uploading.
                         progressDialog.dismiss();
 
+                        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                        String userID = mAuth.getCurrentUser().getUid();
+
                         //Comment of the picture
                         String comment =  writeSomethingEditText.getText().toString();
 
@@ -271,6 +275,7 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
                         UploadContent uploadContent = new UploadContent();
+                        uploadContent.setUserID(userID);
                         uploadContent.setImageURL(downloadUrl.toString());
                         uploadContent.setImageComment(comment);
                         uploadContent.setImageLocation(pictureLocation);

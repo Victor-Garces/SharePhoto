@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,6 +61,7 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
     private Bitmap imageBitmap;
     private Uri photoURI;
 
+    private String userID;
 
     // for security permissions
     @DialogType
@@ -76,8 +78,10 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
 
     private RecyclerView recyclerView;
 
-    // Creating StorageReference and DatabaseReference object.
+    // Creating DatabaseReference object.
     DatabaseReference databaseReference;
+
+    private FirebaseAuth mAuth;
 
     // type of dialog opened in MainActivity
     @IntDef({DialogType.DIALOG_DENY, DialogType.DIALOG_NEVER_ASK})
@@ -92,6 +96,8 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
         setContentView(R.layout.activity_login_success);
 
         recyclerView = findViewById(R.id.myRecyclerView);
+
+        userID = getIntent().getStringExtra("uID");
 
         // StorageReference and DatabaseReference object.
         databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
@@ -115,7 +121,12 @@ public class LoginSuccessActivity extends AppCompatActivity implements OnDialogB
 
         for(DataSnapshot ds : dataSnapshot.getChildren()){
             UploadContent uploadContent = ds.getValue(UploadContent.class);
-            uploadContents.add(uploadContent);
+
+            String uID = uploadContent.getUserID();
+
+            if(uID.equals(userID)){
+                uploadContents.add(uploadContent);
+            }
         }
 
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(uploadContents, this);

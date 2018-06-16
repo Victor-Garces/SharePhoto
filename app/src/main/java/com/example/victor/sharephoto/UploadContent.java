@@ -8,6 +8,8 @@ public class UploadContent {
 
     private String ImageURL;
 
+    private String userID;
+
     public void setImageComment(String imageComment) {
         ImageComment = imageComment;
     }
@@ -30,5 +32,13 @@ public class UploadContent {
 
     public String getImageURL(){
         return ImageURL;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mLogin;
     private Button mRegister;
 
+    private String uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // The user's ID, unique to the Firebase project. Do NOT use this value to
             // authenticate with your backend server, if you have one. Use
             // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
+            uid = user.getUid();
         }
     }
 
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             updateUI(user);
 
                             Intent intent = new Intent(MainActivity.this, LoginSuccessActivity.class);
+                            intent.putExtra("uID",uid);
                             startActivity(intent);
 
                         } else {
