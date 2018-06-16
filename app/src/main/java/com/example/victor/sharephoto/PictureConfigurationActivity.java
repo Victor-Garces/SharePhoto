@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -14,6 +15,9 @@ import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +38,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Share;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +60,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -85,8 +101,15 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
     private String Database_Path = "All_Image_Uploads_Database";
 
     // Creating StorageReference and DatabaseReference object.
-    StorageReference storageReference;
-    DatabaseReference databaseReference;
+    private StorageReference storageReference;
+    private DatabaseReference databaseReference;
+
+    //Facebook
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
+
+    //Facebook switch
+    private boolean facebookSwitch = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +160,10 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
 
         //Storage reference to Firebase
         mStorageRef = FirebaseStorage.getInstance().getReference();
+
+        //Init FB
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
     }
 
     @Override
@@ -151,8 +178,33 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
         switch (item.getItemId()) {
             case R.id.finalize:
                 uploadPictureToFirebase();
-                Intent intent = new Intent(this,LoginSuccessActivity.class);
-                startActivity(intent);
+
+                if(facebookSwitch)
+                {
+                    Bitmap bitmap = null;
+
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    SharePhoto photo = new SharePhoto.Builder()
+                            .setBitmap(bitmap)
+                            .build();
+
+                    if(ShareDialog.canShow(SharePhotoContent.class)){
+
+                        SharePhotoContent photoContent = new SharePhotoContent.Builder()
+                                .addPhoto(photo)
+                                .build();
+                                shareDialog.show(photoContent);
+                    }
+                }else{
+                    Intent intent = new Intent(this,LoginSuccessActivity.class);
+                    startActivity(intent);
+                }
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -174,15 +226,9 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
         int b = buttonView.getId();
-        //TODO Implementar la forma de compartir en estas redes sociales
+
         if (b == R.id.facebook_switch) {
-            if (isChecked) {
-                // The toggle is enabled
-                Toast.makeText(PictureConfigurationActivity.this, "Activado FB", Toast.LENGTH_SHORT).show();
-            } else {
-                // The toggle is disabled
-                Toast.makeText(PictureConfigurationActivity.this, "Desactivado FB", Toast.LENGTH_SHORT).show();
-            }
+            facebookSwitch = isChecked;
         }
 
         if (b == R.id.twitter_switch) {
@@ -206,7 +252,6 @@ public class PictureConfigurationActivity extends AppCompatActivity implements V
             }
         }
     }
-
 
     private void uploadPictureToFirebase(){
 

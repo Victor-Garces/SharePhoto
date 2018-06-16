@@ -25,6 +25,10 @@
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +39,10 @@
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".PictureConfigurationActivity" />
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider255996731629036"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

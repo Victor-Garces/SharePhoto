@@ -18,4 +18,7 @@
     <string name="instagram">Instagram</string>
     <string name="finalize">Finalize</string>
     <string name="imageURL">imageURL</string>
+
+    <string name="facebook_app_id">255996731629036</string>
+    <string name="facebook_login_protocol_scheme">fb255996731629036</string>
 </resources>
